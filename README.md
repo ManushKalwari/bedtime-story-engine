@@ -12,7 +12,7 @@ py -m venv .venv
 Copy-Item .env.example .env
 ```
 
-Open `.env` and replace `replace_locally` with your own OpenAI API key. The app loads this file automatically. A key already set in your terminal takes precedence. `.env` is excluded from Git.
+Open `.env` and replace `replace_locally` with your own OpenAI API key. The app loads this file automatically.
 
 On macOS/Linux, use `python3 -m venv .venv`, `.venv/bin/python` in place of `.\.venv\Scripts\python.exe`, and `cp .env.example .env`.
 
@@ -38,7 +38,6 @@ To try the app without an API key, run the fixed offline demo:
 .\.venv\Scripts\python.exe -m story_engine --demo --inspect
 ```
 
-`main.py` also runs the same app. The model remains `gpt-3.5-turbo`, as required by the assignment.
 
 ## How it works
 
@@ -47,7 +46,7 @@ To try the app without an API key, run the fixed offline demo:
 3. **Review and revise.** Separate LLM reviews assess safety and story quality. Python checks word count and controls revisions. Edits preserve connected details and payoffs.
 4. **Save the result.** Return a story that passes the checks and save its draft history, reviews, token usage, and timing.
 
-The default limit is two revisions and 24 API attempts per turn. Use `--max-revisions`, `--max-calls`, or `--max-seconds` to adjust the limits.
+Use `--max-revisions`, `--max-calls`, or `--max-seconds` to adjust the limits. The default limit is two revisions and 24 API attempts per turn. 
 
 See the [system diagram](docs/ARCHITECTURE.md) for the flow between the user, writer, reviewers, and revision controller.
 
@@ -62,7 +61,7 @@ Each run is saved under `runs/<run-id>/`:
 | `trace.jsonl` | Model calls, token counts, call durations, and errors |
 | `inspect.html` | Draft comparison and review details, when requested |
 
-Token totals and elapsed time also appear in the terminal. Optional pricing variables in `.env.example` enable cost estimates. Saved runs contain story and request text; `--trace-content` additionally records prompts and responses. The `runs/` folder is excluded from Git.
+Token totals and elapsed time also appear in the terminal. Optional pricing variables in `.env.example` enable cost estimates. Saved runs contain story and request text; `--trace-content` records prompts and responses. 
 
 ## Development
 
@@ -72,7 +71,7 @@ Token totals and elapsed time also appear in the terminal. Optional pricing vari
 .\.venv\Scripts\python.exe -m ruff format --check .
 ```
 
-Tests run offline. Evaluation scripts cover judge calibration, workflow comparisons, and before/after story reviews. They show a preview by default; `--execute` makes API calls. See [evaluation instructions](docs/EXPERIMENTS.md).
+Tests run offline. Evaluation scripts cover judge calibration, workflow comparisons, and before-after story reviews. They show a preview by default; `--execute` makes API calls. See [evaluation instructions](docs/EXPERIMENTS.md).
 
 | Location | Contents |
 |---|---|
@@ -95,8 +94,8 @@ Tests run offline. Evaluation scripts cover judge calibration, workflow comparis
 
 I would start with a small personalization and feedback prototype:
 
-1. **Ask what the child enjoys.** Offer an optional choice of interests, such as silly comedy, fairy tales, or anime-inspired adventures. A research agent could suggest techniques from relevant authors and genres for use in original stories, keeping the language appropriate for the child's age and the ending calm.
+1. **Ask what the child enjoys.** Offer optional interests, such as silly comedy, fairy tales, or anime-inspired adventures. A research agent could suggest techniques from relevant authors and genres for use in original stories, keeping the language appropriate for the child's age and the ending calm.
 2. **Learn from feedback.** Collect an optional rating and a favorite moment, with a caregiver's help where appropriate. With permission, maintain an editable preference summary. Over 10-15 stories, look for patterns in preferred characters, humor, pacing, and themes. Families could review, reset, or delete these preferences.
-3. **Keep longer sessions consistent.** Track the current request, feedback, confirmed preferences, and last accepted story explicitly. As history grows, retrieve relevant preferences and story details. Cache reusable research separately to reduce repeated work and token use.
+3. **Keep longer sessions consistent.** Track current request, feedback, confirmed preferences, and last accepted story explicitly. As history grows, retrieve relevant preferences and story details. Cache reusable research separately to reduce repeated work and token use.
 
-Within the two-hour window, I would prioritize the preference question, feedback capture, and comparison with human ratings. Retrieval and caching would follow, with quality, latency, and token usage guiding further changes. The same priorities are outlined in `main.py`.
+I would prioritize the preference question, feedback capture, and comparison with human ratings; retrieval and caching, with quality, latency, and token usage guiding long term usage.
