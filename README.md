@@ -90,7 +90,7 @@ Tests run offline. Evaluation scripts cover judge calibration, workflow comparis
 - [Review criteria](docs/RUBRIC.md)
 - [Validation results](docs/VALIDATION.md)
 
-## With two more hours
+## Future Scope
 
 I would start with a small personalization and feedback prototype:
 
