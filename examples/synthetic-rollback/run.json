@@ -1,0 +1,271 @@
+{
+  "run_id": "fce4b7f49b6b",
+  "provenance": "synthetic",
+  "request": {
+    "prompt": "A story about Alice and her best friend Bob, who is a cat, finding a quiet place to watch the moon.",
+    "age": 7,
+    "length": "standard"
+  },
+  "feedback": [],
+  "brief": {
+    "premise": "Alice and her best friend Bob the cat find a quiet place to watch the moon.",
+    "category": "friendship",
+    "age": 7,
+    "length": "standard",
+    "constraints": [
+      "Alice is a girl.",
+      "Bob is her best friend and a cat."
+    ],
+    "decision": "allow",
+    "parent_note": ""
+  },
+  "blueprint": {
+    "characters": [
+      "Alice, curious and gentle",
+      "Bob, her cat friend",
+      "Grandma, supportive companion"
+    ],
+    "beats": [
+      "Their window is blocked by a sunflower.",
+      "Two indoor moon-like shapes prompt gentle discoveries.",
+      "Alice asks Grandma to sit outside; they find the moon.",
+      "They return to a quiet room and rest."
+    ],
+    "continuity_facts": [
+      "Bob remains a cat.",
+      "The cushion is blue."
+    ],
+    "wind_down": "Resolve the search before returning to warmth and stillness."
+  },
+  "drafts": [
+    {
+      "version": 0,
+      "story": {
+        "title": "A Place for the Moon",
+        "paragraphs": [
+          "Alice kept a small blue cushion beside her window. It was just the right size for Bob, her best friend, who was a cat. Every evening, Bob pressed one soft paw against the glass, as if he were saving a place for the moon. Tonight, however, a tall sunflower nodded across their view. They could see its leaves, its stem, and one very sleepy bee, but no moon.",
+          "\"We need another window,\" Alice said. Bob flicked one ear. He led her to the kitchen, where a round silver shape shone on the wall. Alice smiled, then noticed the handle. It was only a saucepan, hanging beside the wooden spoons. She tapped it gently with her finger. The little note faded into the warm room, and Bob sat down as though he had meant to show her a song.",
+          "Next they tried the hallway. A pale circle rested on the rug. Alice knelt beside it, and Bob curled his tail around her wrist. The circle came from a small lamp behind them. \"That moon stays indoors,\" she whispered. She carried her blue cushion to the back door and asked Grandma if they could sit together on the step. Grandma brought a blanket and joined them in the mild evening air.",
+          "Beyond the garden fence, the moon rose above the apple tree. Its light lay along the leaves like a thin silver ribbon. Alice placed the cushion beside her, but Bob chose her lap instead. She rested her hand on his warm back. Grandma tucked the blanket around them both. The sunflower, seen from here, was only a quiet shape in the garden. Nothing needed moving after all; they had simply found another place to look.",
+          "Alice looked up at the moon and counted the little lights beside it. Bob watched a leaf turn slowly on its stem. Grandma told them which window they would try tomorrow, and Alice wondered what else they might see. They went inside together, carrying the blanket and the blue cushion. Bob followed Alice down the hallway, and she put the cushion back beside her window before climbing into bed."
+        ]
+      },
+      "assessment": {
+        "metrics": {
+          "word_count": 353,
+          "paragraph_count": 5,
+          "sentence_count": 31,
+          "mean_sentence_words": 11.39,
+          "estimated_fk_grade": 4.9,
+          "estimated_syllables_per_word": 1.36,
+          "dialogue_word_fraction": 0.023,
+          "lexical_flags": [],
+          "failures": [],
+          "warnings": []
+        },
+        "safety": {
+          "safe": true,
+          "evidence": [
+            {
+              "paragraph": 1,
+              "quote": "Alice kept a small blue cushion beside her window. It was ju",
+              "observation": "Scripted synthetic safety finding."
+            }
+          ],
+          "concerns": [],
+          "fixes": []
+        },
+        "quality": {
+          "age_fit": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "Alice looked up at the moon and counted the little lights be",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "coherence": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "Alice looked up at the moon and counted the little lights be",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "fidelity": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "Alice looked up at the moon and counted the little lights be",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "warmth": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "Alice looked up at the moon and counted the little lights be",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "bedtime_calm": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "Alice looked up at the moon and counted the little lights be",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 3
+          },
+          "cadence": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "Alice looked up at the moon and counted the little lights be",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "preserve": [
+            "Alice and Bob's friendship"
+          ],
+          "fixes": [
+            {
+              "paragraph": 5,
+              "instruction": "Give the ending a quieter landing."
+            }
+          ],
+          "arousal_by_paragraph": [
+            2,
+            3,
+            3,
+            2,
+            3
+          ]
+        }
+      },
+      "retained": true,
+      "decision": "initial assessment under current requirements"
+    },
+    {
+      "version": 1,
+      "story": {
+        "title": "A Place for the Moon",
+        "paragraphs": [
+          "Alice kept a small blue cushion beside her window. It was just the right size for Bob, her best friend, who was a cat. Every evening, Bob pressed one soft paw against the glass, as if he were saving a place for the moon. Tonight, however, a tall sunflower nodded across their view. They could see its leaves, its stem, and one very sleepy bee, but no moon.",
+          "\"We need another window,\" Alice said. Bob flicked one ear. He led her to the kitchen, where a round silver shape shone on the wall. Alice smiled, then noticed the handle. It was only a saucepan, hanging beside the wooden spoons. She tapped it gently with her finger. The little note faded into the warm room, and Bob sat down as though he had meant to show her a song.",
+          "Next they tried the hallway. A pale circle rested on the rug. Alice knelt beside it, and Bob curled his tail around her wrist. The circle came from a small lamp behind them. \"That moon stays indoors,\" she whispered. She carried her blue cushion to the back door and asked Grandma if they could sit together on the step. Grandma brought a blanket and joined them in the mild evening air.",
+          "Beyond the garden fence, the moon rose above the apple tree. Its light lay along the leaves like a thin silver ribbon. Alice placed the cushion beside her, but Bob chose her lap instead. She rested her hand on his warm back. Grandma tucked the blanket around them both. The sunflower, seen from here, was only a quiet shape in the garden. Nothing needed moving after all; they had simply found another place to look.",
+          "For a little while, nobody said anything. Bob purred against Alice's hand, a small steady sound beneath the leaves. When her eyes grew heavy, Grandma carried the cushion inside. Alice followed with Bob beside her. In bed, she could see one silver corner of the moon above the sunflower. That was enough. She settled under her blanket, and Bob folded himself into the blue cushion. The room was warm. The garden was quiet. They rested."
+        ]
+      },
+      "assessment": {
+        "metrics": {
+          "word_count": 359,
+          "paragraph_count": 5,
+          "sentence_count": 36,
+          "mean_sentence_words": 9.97,
+          "estimated_fk_grade": 4.5,
+          "estimated_syllables_per_word": 1.37,
+          "dialogue_word_fraction": 0.022,
+          "lexical_flags": [],
+          "failures": [],
+          "warnings": []
+        },
+        "safety": {
+          "safe": true,
+          "evidence": [
+            {
+              "paragraph": 1,
+              "quote": "Alice kept a small blue cushion beside her window. It was ju",
+              "observation": "Scripted synthetic safety finding."
+            }
+          ],
+          "concerns": [],
+          "fixes": []
+        },
+        "quality": {
+          "age_fit": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "For a little while, nobody said anything. Bob purred against",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "coherence": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "For a little while, nobody said anything. Bob purred against",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "fidelity": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "For a little while, nobody said anything. Bob purred against",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 2
+          },
+          "warmth": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "For a little while, nobody said anything. Bob purred against",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "bedtime_calm": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "For a little while, nobody said anything. Bob purred against",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 5
+          },
+          "cadence": {
+            "evidence": {
+              "paragraph": 5,
+              "quote": "For a little while, nobody said anything. Bob purred against",
+              "observation": "Scripted rating to exercise the controller."
+            },
+            "score": 4
+          },
+          "preserve": [
+            "Alice and Bob's friendship"
+          ],
+          "fixes": [
+            {
+              "paragraph": 5,
+              "instruction": "Give the ending a quieter landing."
+            }
+          ],
+          "arousal_by_paragraph": [
+            2,
+            3,
+            3,
+            2,
+            1
+          ]
+        }
+      },
+      "retained": false,
+      "decision": "rollback: at least one rubric dimension regressed"
+    }
+  ],
+  "selected_version": null,
+  "status": "failed",
+  "stop_reason": "regression_or_plateau",
+  "warnings": [],
+  "usage": {
+    "attempts": 8,
+    "completed_calls": 8,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "usage_complete": false,
+    "estimated_usd_for_recorded_usage": null,
+    "elapsed_seconds": 0.016,
+    "input_usd_per_million": null,
+    "output_usd_per_million": null
+  }
+}
