@@ -24,6 +24,30 @@ def prompt(name: str) -> str:
     return files("story_engine").joinpath("prompts", f"{name}.md").read_text(encoding="utf-8")
 
 
+def length_task(brief, current_words=None):
+    """Give the model a concrete writing target and precomputed repair amounts."""
+    minimum, maximum = word_bounds(brief.age, brief.length)
+    target = (minimum + maximum) // 2
+    task = {"target_body_words": target, "instruction": f"Aim for about {target} body words."}
+    if current_words is not None:
+        task["current_body_words"] = current_words
+        task["minimum_words_to_add"] = max(0, minimum - current_words)
+        task["minimum_words_to_remove"] = max(0, current_words - maximum)
+        if current_words < minimum:
+            task["instruction"] = (
+                f"Expand the body by at least {minimum - current_words} words; "
+                f"aim to add about {target - current_words} words to reach {target}. "
+                "Add connected actions or discoveries inside existing paragraphs."
+            )
+        elif current_words > maximum:
+            task["instruction"] = (
+                f"Shorten the body by at least {current_words - maximum} words; "
+                f"aim to remove about {current_words - target} words to reach {target}. "
+                "Keep the character's goal, setup, payoff, and quiet ending."
+            )
+    return task
+
+
 def intake(client, request, feedback, previous=None):
     def validate(brief):
         if not feedback and (brief.age != request.age or brief.length != request.length):
@@ -67,6 +91,7 @@ def write(client, brief, blueprint=None, *, use_techniques=True):
     payload = {
         "brief": brief.model_dump(),
         "body_word_range": word_bounds(brief.age, brief.length),
+        "length_task": length_task(brief),
         "narrative_spine": ARCS[brief.category],
         "blueprint": blueprint.model_dump() if blueprint else None,
     }
@@ -172,6 +197,8 @@ def edit(client, draft, brief, feedback):
             raise EngineError(
                 "The editor's protected connection is not grounded in this draft"
             ) from exc
+    bounds = word_bounds(brief.age, brief.length)
+    current_words = measure(draft.story, bounds).word_count
     patch = client.structured(
         "editor",
         prompt("editor"),
@@ -180,7 +207,8 @@ def edit(client, draft, brief, feedback):
             "brief": brief.model_dump(),
             "feedback_ledger": feedback,
             "assessment": draft.assessment.model_dump(),
-            "body_word_range": word_bounds(brief.age, brief.length),
+            "body_word_range": bounds,
+            "length_task": length_task(brief, current_words),
             "protected_connection": connection.model_dump() if connection else None,
         },
         Patch,

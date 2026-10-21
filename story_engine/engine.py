@@ -1,11 +1,12 @@
 """Control draft acceptance, revisions, and rollback."""
 
 from . import agents
+from .config import word_bounds
 from .schemas import Draft, RunResult
 from .telemetry import EngineError
 
 
-def retain_candidate(old, new, *, allow_equal=False) -> tuple[bool, str]:
+def retain_candidate(old, new, *, allow_equal=False, word_range=None) -> tuple[bool, str]:
     """Keep safety repairs and candidates without measured regressions."""
     if old.safety.safe and not new.safety.safe:
         return False, "rollback: safety regressed"
@@ -13,6 +14,14 @@ def retain_candidate(old, new, *, allow_equal=False) -> tuple[bool, str]:
         return True, "retained: safety concern resolved (other gates still apply)"
     if len(new.metrics.failures) > len(old.metrics.failures):
         return False, "rollback: deterministic constraints regressed"
+    length_improved = False
+    if word_range is not None:
+        minimum, maximum = word_range
+        old_gap = max(minimum - old.metrics.word_count, old.metrics.word_count - maximum, 0)
+        new_gap = max(minimum - new.metrics.word_count, new.metrics.word_count - maximum, 0)
+        if new_gap > old_gap:
+            return False, "rollback: word count moved farther from the required range"
+        length_improved = new_gap < old_gap
     old_scores, new_scores = old.scores(), new.scores()
     if any(new_scores[k] < old_scores[k] for k in old_scores):
         return False, "rollback: at least one rubric dimension regressed"
@@ -23,6 +32,8 @@ def retain_candidate(old, new, *, allow_equal=False) -> tuple[bool, str]:
     )
     if improved:
         return True, "retained: measured improvement"
+    if length_improved:
+        return True, "retained: word count moved closer to the required range"
     if allow_equal and new.eligible():
         return True, "retained: requested edit with no measured regression"
     return False, "rollback: no measured improvement"
@@ -86,7 +97,10 @@ class StoryEngine:
                     self.client, candidate_story, result.brief, request, feedback
                 )
                 keep, reason = retain_candidate(
-                    incumbent.assessment, candidate_assessment, allow_equal=bool(change)
+                    incumbent.assessment,
+                    candidate_assessment,
+                    allow_equal=bool(change),
+                    word_range=word_bounds(result.brief.age, result.brief.length),
                 )
                 candidate = Draft(
                     version=revision + 1,

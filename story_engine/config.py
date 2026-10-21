@@ -3,9 +3,12 @@
 import math
 import os
 from dataclasses import dataclass
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 MODEL = "gpt-3.5-turbo"  # Assignment constraint. No model override or silent fallback.
-PROMPT_VERSION = "1.3.5"
+PROMPT_VERSION = "1.3.8"
 DIMENSIONS = ("age_fit", "coherence", "fidelity", "warmth", "bedtime_calm", "cadence")
 THRESHOLDS = dict(age_fit=4, coherence=3, fidelity=4, warmth=3, bedtime_calm=4, cadence=3)
 ARCS = {
@@ -15,6 +18,18 @@ ARCS = {
     "whimsy": "A playful goal; three gentle attempts; surprising solution; quiet rest.",
     "sensory": "A simple journey; soft sensory discoveries; slower pace; a settled destination.",
 }
+
+
+def load_environment() -> None:
+    """Load a local .env without replacing variables supplied by the shell."""
+    local = Path.cwd() / ".env"
+    if local.is_file():
+        load_dotenv(local, override=False, encoding="utf-8-sig")
+        return
+    # Editable installs can be launched from outside the source checkout.
+    project = Path(__file__).resolve().parent.parent
+    if (project / "pyproject.toml").is_file():
+        load_dotenv(project / ".env", override=False, encoding="utf-8-sig")
 
 
 def word_bounds(age: int, length: str) -> tuple[int, int]:
@@ -55,6 +70,8 @@ class Settings:
 
     @classmethod
     def from_env(cls, **kwargs):
+        load_environment()
+
         def price(name):
             raw = os.getenv(name)
             return None if raw is None else float(raw)

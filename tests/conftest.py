@@ -9,6 +9,7 @@ from story_engine.telemetry import Recorder
 
 @pytest.fixture(autouse=True)
 def offline_only(monkeypatch):
+    monkeypatch.setenv("PYTHON_DOTENV_DISABLED", "1")
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     for name in (
         "ALL_PROXY",

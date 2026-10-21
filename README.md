@@ -16,12 +16,20 @@ py -m venv .venv
 
 On macOS/Linux, use `python3 -m venv .venv` and `.venv/bin/python` for the equivalent commands. The editable install picks up later source changes. The demo uses fixed responses and needs no API key.
 
-For live generation, set a key in your shell:
+For live generation, copy the example once, then open `.env` and replace
+`replace_locally` with your own API key. On macOS/Linux, use `cp .env.example .env`.
 
 ```powershell
-$env:OPENAI_API_KEY="your-key-here"
+Copy-Item .env.example .env
+# Edit .env before running the next command.
 .\.venv\Scripts\python.exe -m story_engine --request "Alice and her best friend Bob, a cat, discover a garden on the moon" --age 7 --interactive --inspect --trace-content
 ```
+
+The app automatically loads `.env` from the current directory, falling back to the
+source checkout when using an editable install. Existing terminal variables take
+precedence. `.env` is ignored by Git; `.env.example` contains placeholders only.
+For CI or deployment, supply environment variables through the platform's secret
+settings; set `PYTHON_DOTENV_DISABLED=1` to disable local file loading.
 
 `bedtime`, `python -m story_engine`, and `python main.py` use the same CLI when run in the installed environment. The model is fixed in `story_engine/config.py`; unavailable model access is reported as an error.
 
@@ -46,7 +54,7 @@ Each run saves:
 | `trace.jsonl` | Stages, timing, token usage, validation events, and prompt version |
 | `inspect.html` | Local review page with scores, reasons, and draft history |
 
-`--trace-content` also saves full prompts, responses, and detailed validation errors. Run files contain request and story text even without that flag. Keys are read from the environment. `.env.example` lists supported variables; `.env` files are not automatically loaded. Cost estimates require both optional token-price variables.
+`--trace-content` also saves full prompts, responses, and detailed validation errors. Run files contain request and story text even without that flag. `.env.example` lists supported environment variables, which can also be loaded from your local `.env`. Cost estimates require both optional token-price variables.
 
 ## Code and documentation
 

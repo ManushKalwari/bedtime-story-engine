@@ -5,6 +5,7 @@ from story_engine.config import Settings
 from story_engine.demo import DemoTransport
 from story_engine.engine import StoryEngine, retain_candidate
 from story_engine.llm import ModelClient
+from story_engine.metrics import measure
 from story_engine.schemas import Story
 from story_engine.telemetry import EngineError, Recorder
 
@@ -97,6 +98,69 @@ def test_component_regression_blocks_higher_average(client, request_data):
 def test_noop_quality_does_not_extend_loop(client, request_data):
     old = assessment(client, request_data)
     assert not retain_candidate(old, old)[0]
+
+
+@pytest.mark.parametrize(
+    "old_count,new_count,keep",
+    [
+        (173, 220, True),
+        (255, 246, False),
+        (500, 480, True),
+        (300, 299, False),
+        (220, 220, False),
+        (173, 530, True),
+        (173, 600, False),
+    ],
+)
+def test_length_progress_uses_distance_from_range(client, request_data, old_count, new_count, keep):
+    old = assessment(client, request_data)
+    new = old.model_copy(deep=True)
+    old.metrics.word_count, new.metrics.word_count = old_count, new_count
+    old.metrics.failures = [] if 300 <= old_count <= 450 else ["Outside word range"]
+    new.metrics.failures = [] if 300 <= new_count <= 450 else ["Outside word range"]
+    assert retain_candidate(old, new, word_range=(300, 450))[0] is keep
+
+
+def test_length_progress_does_not_override_rubric_regression(client, request_data):
+    old = assessment(client, request_data)
+    new = old.model_copy(deep=True)
+    old.metrics.word_count, new.metrics.word_count = 173, 220
+    old.metrics.failures = new.metrics.failures = ["Outside word range"]
+    new.quality.fidelity.score = old.quality.fidelity.score - 1
+    assert not retain_candidate(old, new, word_range=(300, 450))[0]
+
+
+@pytest.mark.parametrize("revisions,expected_status", [(1, "failed"), (2, "accepted")])
+def test_partial_length_repair_continues_without_accepting_short_story(
+    client, request_data, monkeypatch, revisions, expected_status
+):
+    base = assessment(client, request_data)
+    for dimension in base.scores():
+        getattr(base.quality, dimension).score = 5
+
+    def story_with_words(count):
+        return Story(title="Length repair", paragraphs=["word " * count])
+
+    def review(_client, story, *_args):
+        result = base.model_copy(deep=True)
+        result.metrics = measure(story, (300, 450))
+        return result
+
+    candidates = iter([story_with_words(220), story_with_words(320)])
+    monkeypatch.setattr(agents, "write", lambda *a: story_with_words(173))
+    monkeypatch.setattr(agents, "review", review)
+    monkeypatch.setattr(agents, "edit", lambda *a: next(candidates))
+    client.settings = Settings(max_revisions=revisions, parallel_reviews=False)
+    result = StoryEngine(client).run(request_data)
+    assert result.status == expected_status
+    assert result.drafts[1].retained
+    assert "closer" in result.drafts[1].decision
+    if revisions == 1:
+        assert result.selected() is None
+        assert result.stop_reason == "revision_limit"
+    else:
+        assert result.selected().assessment.metrics.word_count == 320
+        assert result.stop_reason == "quality_gates_met"
 
 
 def test_missing_judge_never_approves(client, request_data, monkeypatch):

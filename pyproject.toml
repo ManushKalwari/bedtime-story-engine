@@ -7,7 +7,7 @@ name = "bedtime-story-engine"
 version = "1.0.0"
 description = "A bounded, inspectable bedtime-story generation and evaluation workflow"
 requires-python = ">=3.10"
-dependencies = ["openai==1.109.1", "pydantic==2.11.9", "rich==14.1.0"]
+dependencies = ["openai==1.109.1", "pydantic==2.11.9", "rich==14.1.0", "python-dotenv==1.2.4"]
 
 [project.optional-dependencies]
 dev = ["pytest==8.4.2", "ruff==0.13.1"]

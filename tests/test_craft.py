@@ -8,11 +8,19 @@ from pydantic import ValidationError
 from evals.common import load_data, reference_brief
 from evals.judge_calibration import main as calibration_main
 from story_engine import agents
-from story_engine.config import Settings
+from story_engine.config import DIMENSIONS, Settings
 from story_engine.demo import DemoTransport
 from story_engine.engine import StoryEngine, retain_candidate
 from story_engine.llm import ModelClient
-from story_engine.schemas import Blueprint, HolisticVerdict, PlannedBlueprint, RunResult, Story
+from story_engine.review_validation import verify_evidence
+from story_engine.schemas import (
+    Blueprint,
+    GroundedQualityReview,
+    HolisticVerdict,
+    PlannedBlueprint,
+    RunResult,
+    Story,
+)
 from story_engine.telemetry import EngineError, Recorder
 
 
@@ -34,6 +42,23 @@ class CraftTransport(DemoTransport):
 
 def make_client(change=None):
     return ModelClient(CraftTransport(change), Recorder(Settings(parallel_reviews=False)))
+
+
+def test_judge_example_matches_live_schema_and_quotes_its_own_story():
+    text = agents.prompt("quality")
+    source = text.split("Example input:", 1)[1].split("Example output", 1)[0]
+    paragraphs = [
+        line.split(": ", 1)[1]
+        for line in source.splitlines()
+        if line.startswith("Story paragraph ")
+    ]
+    example = text.split("Example output", 1)[1]
+    value, _ = json.JSONDecoder().raw_decode(example[example.index("{") :])
+    review = GroundedQualityReview.model_validate(value)
+    story = Story(title="Calibration example", paragraphs=paragraphs)
+    evidence = [getattr(review, dimension).evidence for dimension in DIMENSIONS]
+    evidence.extend([review.craft.resolution, review.craft.specificity])
+    verify_evidence(evidence, story)
 
 
 def test_new_plans_require_craft_but_legacy_blueprints_still_load(client):
@@ -67,6 +92,55 @@ def test_planner_craft_and_techniques_reach_writer(request_data):
     [writer] = [p for stage, p in client.transport.requests if stage == "writer"]
     assert writer["blueprint"]["craft"] == result.blueprint.craft.model_dump()
     assert client.recorder.attempts == 8
+
+
+@pytest.mark.parametrize(
+    "count, addition, removal", [(255, 45, 0), (246, 54, 0), (500, 0, 50), (350, 0, 0)]
+)
+def test_editor_receives_length_repair_even_with_perfect_scores(
+    request_data, count, addition, removal
+):
+    client = make_client()
+    result = StoryEngine(client).run(request_data)
+    draft = result.selected().model_copy(deep=True)
+    draft.story = Story(title="Test", paragraphs=["word " * (count // 5)] * 5)
+    # Complete the requested count without relying on the assessment's stale count.
+    draft.story.paragraphs[-1] += " word" * (count % 5)
+    draft.assessment.quality.craft.setup_payoff = None
+    for dimension in draft.assessment.scores():
+        getattr(draft.assessment.quality, dimension).score = 5
+    draft.assessment.quality.fixes = []
+    client.transport.requests.clear()
+    before = client.recorder.attempts
+    agents.edit(client, draft, result.brief, [])
+    [(stage, payload)] = client.transport.requests
+    task = payload["length_task"]
+    assert stage == "editor"
+    assert task["current_body_words"] == count
+    assert task["minimum_words_to_add"] == addition
+    assert task["minimum_words_to_remove"] == removal
+    assert task["target_body_words"] == 375
+    if addition:
+        assert f"at least {addition} words" in task["instruction"]
+    if removal:
+        assert f"at least {removal} words" in task["instruction"]
+    assert client.recorder.attempts == before + 1
+
+
+@pytest.mark.parametrize(
+    "age, length, target",
+    [(5, "short", 170), (5, "standard", 375), (10, "short", 275), (10, "standard", 625)],
+)
+def test_writer_receives_length_target_without_extra_calls(age, length, target):
+    client = make_client()
+    brief = reference_brief(load_data("requests.json")[0])
+    brief.age, brief.length = age, length
+    agents.write(client, brief)
+    [(stage, payload)] = client.transport.requests
+    assert stage == "writer"
+    assert payload["length_task"]["target_body_words"] == target
+    assert "current_body_words" not in payload["length_task"]
+    assert client.recorder.attempts == 1
 
 
 @pytest.mark.parametrize("target", ["resolution", "specificity", "setup", "payoff"])
@@ -202,6 +276,8 @@ def test_calibration_includes_matched_constraint_control_and_sensory_control():
     assert not cases["subtle-negative-constraint"]["expected_accept"]
     assert cases["earned-payoff-control"]["expected_accept"]
     assert cases["quiet-sensory-control"]["expected_accept"]
+    assert cases["building-replaced-by-friendship"]["target_dimensions"] == ["fidelity"]
+    assert cases["ornate-language-for-five"]["target_dimensions"] == ["age_fit"]
     bad = cases["subtle-negative-constraint"]["story"]["paragraphs"]
     good = cases["earned-payoff-control"]["story"]["paragraphs"]
     assert bad[0] == good[0] and bad[2] == good[2]
@@ -214,7 +290,7 @@ def test_calibration_dry_run_never_constructs_api_client(monkeypatch, capsys):
         lambda: pytest.fail("Dry run must not create an API client"),
     )
     assert calibration_main([]) == 0
-    assert "15 seeded cases" in capsys.readouterr().out
+    assert f"{len(load_data('calibration.json'))} seeded cases" in capsys.readouterr().out
 
 
 def test_calibration_reports_targeted_defects_and_keeps_errors_in_denominator(

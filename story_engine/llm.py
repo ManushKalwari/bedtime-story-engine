@@ -9,7 +9,7 @@ from typing import Callable, Protocol, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
-from .config import MODEL, PROMPT_VERSION
+from .config import MODEL, PROMPT_VERSION, load_environment
 from .telemetry import BudgetExceeded, EngineError, Recorder, ResponseValidationError
 
 T = TypeVar("T", bound=BaseModel)
@@ -53,10 +53,11 @@ class OpenAITransport:
     def __init__(self):
         from openai import OpenAI
 
+        load_environment()
         key = os.getenv("OPENAI_API_KEY", "").strip()
         if not key or key == "replace_locally":
             raise EngineError(
-                "Set OPENAI_API_KEY in your shell, or run --demo for an offline example."
+                "Set OPENAI_API_KEY in .env or your shell, or run --demo for an offline example."
             )
         # Disable SDK retries so every attempt is counted by our single retry policy.
         self.client = OpenAI(api_key=key, max_retries=0, base_url="https://api.openai.com/v1")

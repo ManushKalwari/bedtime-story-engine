@@ -5,6 +5,42 @@ specific actions, discoveries, and payoffs. These are original craft examples, n
 author imitation prompts or adaptations of existing stories. Their effectiveness
 with the required model still needs live evaluation.
 
+## Prompting the required model
+
+The model remains `gpt-3.5-turbo` for every generation and review call. We use
+explicit tasks, separated system instructions and JSON input, schema descriptions,
+and short examples of language and scoring. These choices follow the general
+[OpenAI prompting guidance](https://developers.openai.com/api/docs/guides/prompt-engineering),
+which recommends explicit instructions for GPT models and diverse input/output
+examples. This is general guidance, not a measured GPT-3.5-specific performance claim.
+GPT-3.5 Turbo does not support schema-enforced
+[Structured Outputs](https://developers.openai.com/api/docs/models/gpt-3.5-turbo);
+the application retains JSON mode, Python validation, and bounded repairs.
+
+The writer receives a target near the middle of the permitted body word range.
+The editor receives the actual current count and calculated minimum addition or
+removal, even when the judge supplies perfect ratings and no fixes. Its target
+applies to the complete patched story. Expansion should add connected actions,
+not harder vocabulary. These targets are guidance; code still enforces the original
+word bounds. A later controller fix recognizes reduced distance from that range
+as revision progress, while keeping out-of-range drafts ineligible. Safety and
+rubric regressions still block retention, and revision/call limits still apply.
+
+Judge examples contrast a missed requested action, age-inappropriate language,
+and a concrete earned outcome. Safety and calmness do not imply high fidelity or
+age fit. Prompt version `1.3.7` identifies these changes in new traces. Targeted
+offline checks validate integration and call counts; they cannot establish honest
+model scoring or consistent story quality. Claims about tipping a model or large
+percentage gains in the supplied article have not been adopted as requirements.
+
+Version `1.3.8` adds a listener perspective to the writer and judge: imagine an
+adult reading aloud to the exact age in `brief.age`. The writer checks whether
+the listener can picture the events and follow the character's goal and outcome.
+The judge cites language that would require extra explanation, or demonstrates
+clarity when no such problem is present. This is an editorial estimate, not child
+role-play or measured child comprehension. It adds no calls, output fields, or
+acceptance gates; its effect on live judge accuracy remains unverified.
+
 ## Catalog
 
 The authoritative records are in `story_engine/techniques.py`. Each immutable

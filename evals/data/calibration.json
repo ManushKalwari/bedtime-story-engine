@@ -302,5 +302,41 @@
     },
     "expected_accept": true,
     "target_dimensions": []
+  },
+  {
+    "id": "building-replaced-by-friendship",
+    "age": 5,
+    "length": "short",
+    "category": "wonder",
+    "prompt": "Moria builds a chocolate island of his own.",
+    "constraints": [],
+    "story": {
+      "title": "A Sweet Walk",
+      "paragraphs": [
+        "Moria wanted to build a chocolate island. He drew a round island on paper and showed it to Pip. Pip put on her boots. They walked to the wood and found a little stream. Beside it stood a tree with brown pods. Moria picked up a fallen pod and carried it to Pip.",
+        "Pip had brought two cakes. They sat on a log and ate them. A bird hopped past their boots. Moria gave Pip the bigger cake because she was hungry. They smiled and watched the water. The paper stayed in Moria's pocket, and they did nothing with the pod.",
+        "Then they went home. Moria put his drawing in a box and pulled up his blanket. He said that having a friend was better than having an island. Pip sat beside him until his eyes closed."
+      ]
+    },
+    "expected_accept": false,
+    "target_dimensions": ["fidelity"]
+  },
+  {
+    "id": "ornate-language-for-five",
+    "age": 5,
+    "length": "short",
+    "category": "whimsy",
+    "prompt": "Moria builds a small chocolate island on a plate and rests beside it.",
+    "constraints": [],
+    "story": {
+      "title": "The Chocolate Construction",
+      "paragraphs": [
+        "Moria contemplated the ambitious realization of his confectionery archipelago, envisioning an extraordinary landscape whose intricately sculpted contours would exemplify his unwavering determination. He deliberately selected a circular plate and assembled chocolate fragments upon its gleaming surface, establishing the foundation of his prospective island with meticulous precision.",
+        "Observing the precarious inclination of a newly erected chocolate tree, Moria recalled the broad fragment he had previously reserved. He positioned this substantial piece beneath the trunk, redistributing its weight and securing the construction. The resulting stability represented the culmination of his patient experimentation, allowing him to complete his miniature island without compromising its distinctive silhouette.",
+        "Satisfied with this tangible manifestation of his original aspiration, Moria placed the completed plate beside his cushion and reclined in contemplative contentment. The familiar blanket enveloped his shoulders while the stillness of the room encouraged an unhurried transition toward repose. His chocolate island remained intact beside him as his eyelids gradually closed."
+      ]
+    },
+    "expected_accept": false,
+    "target_dimensions": ["age_fit"]
   }
 ]
